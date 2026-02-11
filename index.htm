@@ -638,6 +638,47 @@
     // Yes button handler
     yesBtn.addEventListener('click', sayYes);
 
+    // Function to send webhook notification
+    async function sendNotification() {
+      // REPLACE THIS URL WITH YOUR WEBHOOK URL FROM:
+      // - Make.com (https://www.make.com)
+      // - Zapier (https://zapier.com)
+      // - IFTTT (https://ifttt.com)
+      // - n8n (https://n8n.io)
+      
+      const WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/26410210/uefcar5/';
+      
+      // Don't send if webhook URL is not configured
+      if (WEBHOOK_URL ===  'https://hooks.zapier.com/hooks/catch/26410210/uefcar5/') {
+        console.log('Webhook not configured - notification skipped');
+        return;
+      }
+      
+      try {
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            event: 'valentine_yes_clicked',
+            message: 'She clicked YES on the Valentine page! 💖',
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent
+          })
+        });
+        
+        if (response.ok) {
+          console.log('Notification sent successfully!');
+        } else {
+          console.log('Notification failed:', response.status);
+        }
+      } catch (error) {
+        console.log('Notification error:', error);
+        // Silently fail - don't interrupt the user experience
+      }
+    }
+
     function sayYes() {
       document.body.classList.add('celebrating');
       
@@ -666,11 +707,8 @@
         setTimeout(() => createPetal(), i * 150);
       }
 
-      // Optional: Send notification email
-      setTimeout(() => {
-        const emailLink = 'mailto:kesinroebenezer@gmail.com?subject=She%20Said%20Yes!%20💕&body=She%20clicked%20YES%20on%20the%20Valentine%20page!%20%F0%9F%92%96';
-        window.location.href = emailLink;
-      }, 2000);
+      // Send webhook notification automatically
+      sendNotification();
     }
 
     const heartColors = ['#ff5c8a', '#ff8fab', '#ff4d6d', '#ffa6c9'];
