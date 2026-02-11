@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Will You Be My Valentine?</title>  <style>
+    * { box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', sans-serif; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #ffd6e8, #ffeef6, #ffffff);
+      position: relative;
+    }
+
+    /* Blurred photo backdrop */
+    body::after {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      background: url('her-photo.jpg') center / cover no-repeat;
+      filter: blur(18px) brightness(1.05);
+      opacity: 0.35;
+      z-index: 0;
+    }
+
+    /* Soft cloud texture */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://www.transparenttextures.com/patterns/cloudy.png');
+      opacity: 0.22;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.96);
+      padding: 46px 36px;
+      border-radius: 26px;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.16);
+      animation: popIn 0.9s ease;
+      z-index: 3;
+      max-width: 380px;
+      position: relative;
+    }
+
+    h1 { color: #d6336c; margin: 0 0 12px; }
+    p { color: #555; margin-bottom: 26px; font-size: 15px; }
+
+    .intro {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #d6336c;
+      text-align: center;
+      padding: 30px;
+      animation: fadeSequence 5s ease forwards;
+      background: rgba(255,255,255,0.92);
+      border-radius: 26px;
+      z-index: 5;
+    }
+
+    .buttons { display: flex; gap: 16px; justify-content: center; }
+
+    button {
+      border: none;
+      padding: 14px 28px;
+      border-radius: 42px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    }
+
+    .yes {
+      background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+      color: white;
+    }
+
+    .no { background: #eee; color: #444; position: relative; }
+
+    button:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.22);
+    }
+
+    .signature { margin-top: 22px; font-style: italic; color: #d6336c; font-size: 14px; }
+
+    .final {
+      display: none;
+      margin-top: 22px;
+      font-size: 18px;
+      color: #d6336c;
+      animation: popIn 0.6s ease;
+    }
+
+    /* SVG hearts & glitter */
+    .hearts svg, .glitter span {
+      position: absolute;
+      bottom: -40px;
+      pointer-events: none;
+      animation: floatUp linear infinite;
+    }
+
+    .hearts svg { opacity: 0.6; }
+    .glitter span { font-size: 10px; color: gold; }
+
+    @keyframes floatUp {
+      from { transform: translateY(0) translateX(0) scale(0.9); opacity: 1; }
+      to { transform: translateY(-120vh) translateX(24px) scale(1.25); opacity: 0; }
+    }
+
+    @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    @keyframes fadeSequence {
+      0% { opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style></head>
+<body>  <!-- Background Music (fade-in handled in JS) -->  <audio id="bgMusic" autoplay loop>
+    <source src="make-you-feel-my-love-instrumental.mp3" type="audio/mpeg">
+  </audio>  <div class="card"><div class="intro">Ayoka Mi, Adesewa Mi,<br/>I made something just for you.</div>
+
+<h1>Will You Be My Valentine?</h1>
+<p>Today, tomorrow, and all the little moments in between.</p>
+
+<div class="buttons">
+  <button class="yes" id="yesBtn" onclick="sayYes()">Yes</button>
+  <button class="no" onmouseover="moveNo(this)">No</button>
+</div>
+
+<div class="final" id="finalText">I can’t wait to spend Valentine’s with you 💗</div>
+<div class="signature">From your one and only…</div>
+
+  </div>  <div class="hearts" id="hearts"></div>
+  <div class="glitter" id="glitter"></div>  <script>
+    /* Soft music fade-in */
+    const music = document.getElementById('bgMusic');
+    music.volume = 0;
+
+    const fadeInMusic = () => {
+      let v = 0;
+      const fade = setInterval(() => {
+        v += 0.02;
+        if (v >= 0.6) { v = 0.6; clearInterval(fade); }
+        music.volume = v;
+      }, 150);
+    };
+
+    // Attempt autoplay fade-in after load
+    window.addEventListener('load', fadeInMusic);
+
+    function moveNo(btn) {
+      const pad = 70;
+      const x = Math.random() * (window.innerWidth - pad * 2) + pad;
+      const y = Math.random() * (window.innerHeight - pad * 2) + pad;
+      btn.style.position = 'absolute';
+      btn.style.left = x + 'px';
+      btn.style.top = y + 'px';
+    }
+
+    function sayYes() {
+      const btn = document.getElementById('yesBtn');
+      btn.style.transform = 'scale(2.2) rotate(-6deg)';
+      btn.style.opacity = '0';
+
+      document.getElementById('finalText').style.display = 'block';
+
+      for (let i = 0; i < 48; i++) createGlitter();
+
+      window.location.href = 'mailto:kesinroebenezer@gmail.com?subject=She%20Said%20Yes!&body=She%20clicked%20YES%20on%20the%20Valentine%20page.';
+    }
+
+    const heartColors = ['#ff5c8a', '#ff8fab', '#ff4d6d', '#ffa6c9'];
+
+    function createHeart() {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '26');
+      svg.setAttribute('height', '26');
+      svg.setAttribute('viewBox', '0 0 24 24');
+
+      const color = heartColors[Math.floor(Math.random() * heartColors.length)];
+
+      svg.innerHTML = `<path fill="${color}" d="M12 21s-6.7-4.35-9.33-7.14C.3 11.48.5 7.9 3.05 6.1c2.02-1.44 4.6-.9 5.95.72C10.35 5.2 12.93 4.66 14.95 6.1c2.55 1.8 2.75 5.38.38 7.76C18.7 16.65 12 21 12 21z"/>`;
+
+      svg.style.left = Math.random() * 100 + 'vw';
+      svg.style.opacity = 0.45 + Math.random() * 0.45;
+      svg.style.animationDuration = 6 + Math.random() * 6 + 's';
+
+      document.getElementById('hearts').appendChild(svg);
+      setTimeout(() => svg.remove(), 12000);
+    }
+
+    function createGlitter() {
+      const g = document.createElement('span');
+      g.innerHTML = '✨';
+      g.style.left = Math.random() * 100 + 'vw';
+      g.style.animationDuration = 2 + Math.random() * 3 + 's';
+      document.getElementById('glitter').appendChild(g);
+      setTimeout(() => g.remove(), 4000);
+    }
+
+    setInterval(createHeart, 650);
+  </script></body>
+</html>
